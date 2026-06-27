@@ -1,0 +1,69 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# === Pytest / Testing ===
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# === Virtualenv ===
+venv/
+ENV/
+env/
+.venv
+
+# === Environment / Secrets ===
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# === Node / Frontend ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+frontend/node_modules/
+frontend/package-lock.json
+frontend/dist/
+
+# === IDE ===
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# === OS / Misc ===
+*.stackdump
+.DS_Store
+Thumbs.db
+
+# === Docker / Data ===
+docker/db/
+*.log
+
+# === Claude / AI ===
+.claude/
+*.claude.md.backup

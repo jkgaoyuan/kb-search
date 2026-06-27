@@ -1,0 +1,49 @@
+{
+  "name": "kb-search-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "pinia": "^2.1.7",
+    "element-plus": "^2.6.3",
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.6.8",
+    "highlight.js": "^11.9.0",
+    "marked": "^12.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
+    "@vue/eslint-config-standard": "^8.0.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.24.0",
+    "sass": "^1.74.1",
+    "sass-loader": "^14.1.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "@vue/standard"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}
