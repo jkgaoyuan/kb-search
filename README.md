@@ -31,5 +31,5 @@ app/
 
 - FastAPI + SQLModel + PostgreSQL
 - Celery + Redis 异步任务
-- zhparser 中文全文检索
+- PostgreSQL `simple` 分词全文检索（标题/内容/标签）
 - Docker Compose 部署

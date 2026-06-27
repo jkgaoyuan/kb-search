@@ -60,7 +60,7 @@ class SearchService:
         self._log_search(query)
 
         # 构建查询
-        tsquery = func.plainto_tsquery('zh_cn', query)
+        tsquery = func.plainto_tsquery('simple', query)
 
         # 基础查询
         stmt = select(

@@ -47,10 +47,7 @@ docker-compose exec web alembic revision --autogenerate -m "init"
 # 7. 执行迁移
 docker-compose exec web alembic upgrade head
 
-# 8. 安装中文分词扩展
-docker-compose exec db sh -c "echo 'CREATE EXTENSION IF NOT EXISTS zhparser;' | psql -U kb -d kb"
-
-# 9. 验证服务状态
+# 8. 验证服务状态
 curl http://localhost:8000/health
 # 预期返回：{"status":"ok","version":"0.1.0"}
 ```
@@ -88,8 +85,8 @@ SELECT * FROM users;          # 查看用户
 SELECT * FROM documents;      # 查看文档
 SELECT * FROM search_logs;    # 查看搜索日志
 
-# 手动更新全文检索向量
-UPDATE documents SET search_vector = to_tsvector('zh_cn', coalesce(title, '') || ' ' || coalesce(content, ''));
+# 手动更新全文检索向量（使用 PostgreSQL 内置 simple 分词配置）
+UPDATE documents SET search_vector = to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(content, ''));
 
 # 退出
 \q
@@ -280,15 +277,14 @@ docker-compose exec redis redis-cli ping
 
 ### Q3: 搜索中文无结果？
 
-确认 zhparser 已安装：
-```bash
-docker-compose exec db psql -U kb -d kb -c "\dx"
-# 应看到 zhparser
-```
+当前使用 PostgreSQL 内置 `simple` 分词配置。该模式按空格/标点切分，对中文文本**不切词**（如搜索"技术"无法匹配"技术部署"）。如需提升中文搜索质量，可：
+- 使用 Python `jieba` 分词预处理文本后写入 `search_vector`
+- 或评估迁移至 `pg_bigm`（N-gram 模糊匹配）
+- 或文档量 > 5 万时评估 Elasticsearch + IK 分词
 
-如果没有，重新安装：
+验证搜索向量是否正常：
 ```bash
-docker-compose exec db sh -c "echo 'CREATE EXTENSION IF NOT EXISTS zhparser;' | psql -U kb -d kb"
+docker-compose exec db psql -U kb -d kb -c "SELECT id, title, search_vector FROM documents LIMIT 1;"
 ```
 
 ### Q4: 前端 npm install 报错？

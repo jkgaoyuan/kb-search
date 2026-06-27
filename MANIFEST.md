@@ -128,7 +128,6 @@
 # 后端启动
 docker-compose up -d
 docker-compose exec web alembic upgrade head
-docker-compose exec db sh -c "echo 'CREATE EXTENSION IF NOT EXISTS zhparser;' | psql -U kb -d kb"
 
 # 前端启动
 cd frontend && npm install && npm run serve

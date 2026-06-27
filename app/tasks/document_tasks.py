@@ -94,7 +94,7 @@ def update_search_vector(document_id: int):
     from sqlalchemy import text
 
     with Session(engine) as session:
-        sql = text("UPDATE documents SET search_vector = to_tsvector('zh_cn', coalesce(title, '') || ' ' || coalesce(content, '')) WHERE id = :doc_id")
+        sql = text("UPDATE documents SET search_vector = to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(content, '')) WHERE id = :doc_id")
         session.exec(sql, {"doc_id": document_id})
         session.commit()
 

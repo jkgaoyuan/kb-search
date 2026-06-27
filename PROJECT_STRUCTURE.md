@@ -30,7 +30,7 @@
         │      ┌────┴────┐     ┌────┴────┐
         │      │PostgreSQL│     │  Redis  │
         │      │  :5432   │     │ :6379   │
-        │      │  zhparser│     │ 队列/缓存│
+        │      │  simple tokenizer│     │ 队列/缓存│
         │      └─────────┘     └─────────┘
         │
    ┌────▼────────────────────────────────────┐
@@ -182,7 +182,7 @@ Worker 解析完成 -> update_search_vector -> status=completed
 Axios GET /api/v1/search?q=xxx&sort=relevance
     |
     v
-PostgreSQL: SELECT ... WHERE search_vector @@ plainto_tsquery('zh_cn', 'xxx')
+PostgreSQL: SELECT ... WHERE search_vector @@ plainto_tsquery('simple', 'xxx')
     |
     v
 返回结果（含高亮HTML、相关度分数、摘要）
@@ -212,7 +212,7 @@ GROUP BY query ORDER BY COUNT(*) DESC LIMIT 10
 
 | 决策 | 方案 | 理由 |
 |------|------|------|
-| 全文检索 | PostgreSQL tsvector + zhparser | 1万文档量级够用，免运维ES |
+| 全文检索 | PostgreSQL tsvector (simple config) | 1万文档量级够用，免运维ES |
 | 异步解析 | Celery + Redis | DOCX解析可能耗时，不阻塞用户请求 |
 | 文件存储 | /tmp (MVP) | 解析后删除原始文件，节省50GB磁盘 |
 | 前端状态 | Pinia (非Vuex) | Vue3官方推荐，TypeScript友好 |
