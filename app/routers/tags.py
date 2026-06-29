@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select, func
 from app.database import get_session
 from app.models.document import Document
@@ -37,9 +37,9 @@ def list_tags(
 
 @router.get("/documents")
 def search_by_tag(
-    tag: str,
-    page: int = 1,
-    page_size: int = 20,
+    tag: str = Query(..., description="标签"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     session: Session = Depends(get_session)
 ):
     """按标签搜索文档"""

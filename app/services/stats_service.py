@@ -47,12 +47,17 @@ class StatsService:
         if not doc:
             return {}
 
+        # Handle both offset-naive (SQLite) and offset-aware (PostgreSQL) datetimes
+        created_at = doc.created_at
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+
         return {
             "document_id": doc.id,
             "title": doc.title,
             "view_count": doc.view_count,
             "created_at": doc.created_at.isoformat(),
-            "days_since_created": (datetime.now(timezone.utc) - doc.created_at).days,
+            "days_since_created": (datetime.now(timezone.utc) - created_at).days,
         }
 
     def get_category_stats(self) -> List[dict]:

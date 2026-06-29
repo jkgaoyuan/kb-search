@@ -25,8 +25,14 @@ dependencies = [
     "pydantic-settings>=2.3.4",
     "prometheus-client>=0.20.0",
     "python-magic>=0.4.27",
+    "pytest-order>=1.2.0",
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["app*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "order: control test execution order (provided by pytest-order)",
+]
