@@ -1,5 +1,5 @@
 from typing import List, Dict
-import re
+import regex as re
 
 
 class SpellCorrector:

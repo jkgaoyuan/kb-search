@@ -7,7 +7,7 @@ from app.utils.text_utils import generate_summary, highlight_keywords
 from app.utils.redis_client import redis_client
 from app.services.spell_corrector import SpellCorrector
 
-import re
+import regex as re
 
 
 class SearchService:
