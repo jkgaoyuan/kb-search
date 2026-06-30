@@ -141,9 +141,14 @@ const parseStatusText = computed(() => {
 const loadCategories = async () => {
   try {
     const res = await getCategories({ tree: true })
-    categoryOptions.value = buildTree(res.items || [])
+    const items = res.items || []
+    if (items.length === 0) {
+      ElMessage.warning('暂无可用分类，请先创建分类')
+    }
+    categoryOptions.value = buildTree(items)
   } catch (e) {
     console.error(e)
+    ElMessage.error('分类加载失败')
   }
 }
 
@@ -177,7 +182,12 @@ const handleFileRemove = () => {
 }
 
 const handleSubmit = async () => {
-  await formRef.value.validate()
+  try {
+    await formRef.value.validate()
+  } catch (validationError) {
+    // 表单验证失败，Element Plus 已自动显示字段错误提示
+    return
+  }
 
   if (!form.file) {
     ElMessage.warning('请选择文件')
@@ -187,8 +197,8 @@ const handleSubmit = async () => {
   uploading.value = true
 
   try {
-    const categoryId = Array.isArray(form.category_id) 
-      ? form.category_id[form.category_id.length - 1] 
+    const categoryId = Array.isArray(form.category_id)
+      ? form.category_id[form.category_id.length - 1]
       : form.category_id
 
     const res = await uploadDocument({
@@ -207,6 +217,8 @@ const handleSubmit = async () => {
 
   } catch (e) {
     console.error(e)
+    // 请求拦截器已显示错误提示，这里可补充用户反馈
+    ElMessage.error(e?.message || '上传失败，请稍后重试')
   } finally {
     uploading.value = false
   }

@@ -28,6 +28,14 @@ RUN mkdir -p /tmp/uploads
 # Expose port
 EXPOSE 8000
 
+# Entrypoint for auto-migrations
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default command (overridden by docker-compose per service)
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "app.main:app"]
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1

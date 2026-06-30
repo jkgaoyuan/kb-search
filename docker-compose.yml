@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: gunicorn -c gunicorn.conf.py app.main:app
+    command: ["gunicorn", "-c", "gunicorn.conf.py", "app.main:app"]
     volumes:
       - .:/app
       - /tmp/kb-uploads:/tmp/uploads
@@ -20,12 +20,13 @@ services:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     deploy:
       resources:
         limits:
           memory: 512M
     restart: unless-stopped
+    stop_grace_period: 30s
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -37,7 +38,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: celery -A app.tasks.document_tasks worker --loglevel=info --concurrency=2
+    command: ["celery", "-A", "app.tasks.document_tasks", "worker", "--loglevel=info", "--concurrency=2"]
     volumes:
       - /tmp/kb-uploads:/tmp/uploads
     environment:
@@ -45,22 +46,24 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - SECRET_KEY=${SECRET_KEY:-changeme}
+      - PYTHONPATH=/app
     depends_on:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     deploy:
       resources:
         limits:
           memory: 512M
     restart: unless-stopped
+    stop_grace_period: 30s
 
   beat:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: celery -A app.tasks.document_tasks beat --loglevel=info --scheduler celery.beat.PersistentScheduler
+    command: ["celery", "-A", "app.tasks.document_tasks", "beat", "--loglevel=info", "--scheduler", "celery.beat.PersistentScheduler"]
     volumes:
       - celery_beat_data:/tmp/celerybeat
     environment:
@@ -68,11 +71,12 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - SECRET_KEY=${SECRET_KEY:-changeme}
+      - PYTHONPATH=/app
     depends_on:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -99,7 +103,7 @@ services:
           memory: 1G
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kb -d kb"]
+      test: ["CMD", "pg_isready", "-U", "kb", "-d", "kb"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -119,6 +123,11 @@ services:
         limits:
           memory: 256M
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
 volumes:
   pg_data:

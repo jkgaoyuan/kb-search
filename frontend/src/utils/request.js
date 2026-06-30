@@ -32,7 +32,12 @@ request.interceptors.response.use(
   error => {
     const { response } = error
     if (response) {
-      const msg = response.data?.detail || response.data?.message || '请求失败'
+      let msg = response.data?.detail || response.data?.message || '请求失败'
+      if (Array.isArray(msg)) {
+        msg = msg.map(e => e.msg || String(e)).join('；')
+      } else if (typeof msg === 'object') {
+        msg = JSON.stringify(msg)
+      }
       ElMessage.error(msg)
 
       if (response.status === 401) {

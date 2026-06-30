@@ -8,7 +8,7 @@ export const uploadDocument = (data) => {
   formData.append('file', data.file)
 
   return request.post('/documents', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': undefined }
   })
 }
 
